@@ -18,9 +18,10 @@
 		}
 		.wrapper {
 			position:absolute;
+
 		}
 		.wrapper2 {
-			float: right;
+			position:absolute;
 		}
 		.title{
 			font-size: 30px;
@@ -28,9 +29,11 @@
 			position:relative;
 		}
 		#textbox {
-			position:absolute;
+			position:relative;
+			z-index: 1;
 			left:10px;
-			bottom:50px;
+			bottom:0;
+			top:300px;
 			width:230px;
 			height: 200px;
 			background-color: #4a5175;
@@ -43,7 +46,7 @@
 			font-family: "helvetica",sans-serif;
 			text-align: center;
 			color: white;
-			margin:20px;
+			margin-top: 15px;
 
 		}
 		.green {
@@ -60,23 +63,38 @@
 		}
 		#map {
 			height: 80vh;
-			width:60vw;
+			width:70vw;
+			margin-bottom:30px;
 		}
 		#cluster {
+			position:relative;
+
 			height: 80vh;
-			width: 60vw;
+			width: 70vw;
+			margin-top: 30px;
 		}
 		</style>
 
 
 <!-- style the container for the map -->
 <!-- create div for the map here -->
+
 <div class= "wrapper">
-	<div class=title><h1>Street Conditions in Tacoma</h1></div>
-	<div id="map"></div>
-		<div id ="textbox"><p>Street surfaces were evaluated in 2015 to rate their quality and modeled to predict future quality.<br><span class="red">Red</span>= Poor (0-40)<br><span class ="yellow">Yellow</span>= Moderate (40-70)<br><span class= "green">Green</span> = Good (70-100)
+		<h1>Street Conditions in Tacoma</h1>
+
+		<div id="map">
+			<div id="textbox">
+				<p>Street surfaces were evaluated in 2015 to rate their quality and modeled to predict future quality.<br><span class="red">Red</span>= Poor (0-40)<br><span class ="yellow">Yellow</span>= Moderate (40-70)<br><span class= "green">Green</span> = Good (70-100)
+				</div>
+		</div>
+
+<div id = "cluster">
+<h1>Fires in Tacoma from 2015-2020</h1>
 </div>
-	</div>
+</div>
+</div>
+
+
 
 <script>
 			//Mapbox access token here
@@ -98,7 +116,7 @@ map.on('load', function(){
 			"data": "streetCond.json",
 			"generateId": true
 	});
-			
+
 		// //add and style the layer of data
 	 map.addLayer({
 		 	"id":"2015",
@@ -173,11 +191,14 @@ map.addControl(new mapboxgl.NavigationControl());
 });
 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; //'yourAccessTokenHere';
 </Script>
+<section>
 <div class = "wrapper2">
 	<div id="cluster"></div>
 </div>
+</section>
 
 <script>
+
 
 var map2 = new mapboxgl.Map({
  container:'cluster', // HTML container id
@@ -286,5 +307,6 @@ map.on("click","clusters",function(e){
 
 
 		</script>
+
 	</body>
 </html>
