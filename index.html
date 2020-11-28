@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- insert Mapbox GL library links here -->
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+
+
+	</head>
+	<body>
+
+		<style>
+		body {
+			max-width: 80%;
+			margin:auto;
+		}
+		.wrapper {
+			position:absolute;
+		}
+		.wrapper2 {
+			float: right;
+		}
+		.title{
+			font-size: 30px;
+			font-weight: bold;
+			position:relative;
+		}
+		#textbox {
+			position:absolute;
+			left:10px;
+			bottom:50px;
+			width:230px;
+			height: 200px;
+			background-color: #4a5175;
+			opacity:0.75;
+			font-size: 8;
+			line-height:1.5;
+		}
+		p {
+
+			font-family: "helvetica",sans-serif;
+			text-align: center;
+			color: white;
+			margin:20px;
+
+		}
+		.green {
+			color:green;
+			font-weight: bolder;
+		}
+		.yellow {
+			color:yellow;
+			font-weight: bolder;
+		}
+		.red {
+			color:red;
+			font-weight: bolder;
+		}
+		#map {
+			height: 80vh;
+			width:60vw;
+		}
+		#cluster {
+			height: 80vh;
+			width: 60vw;
+		}
+		</style>
+
+
+<!-- style the container for the map -->
+<!-- create div for the map here -->
+<div class= "wrapper">
+	<div class=title><h1>Street Conditions in Tacoma</h1></div>
+	<div id="map"></div>
+		<div id ="textbox"><p>Street surfaces were evaluated in 2015 to rate their quality and modeled to predict future quality.<br><span class="red">Red</span>= Poor (0-40)<br><span class ="yellow">Yellow</span>= Moderate (40-70)<br><span class= "green">Green</span> = Good (70-100)
+</div>
+	</div>
+
+<script>
+			//Mapbox access token here
+			 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; 'yourAccessTokenHere';
+
+// <!-- JS code for the map goes here -->
+			var map = new mapboxgl.Map({
+			container: "map",
+			style: "mapbox://styles/h-warren/ckhp5h0030eql19piink2ez7q",
+			center: [ -122.4559,47.2344],
+			zoom: 12
+		});
+
+
+map.on('load', function(){
+// add geojson source for data on the map
+	map.addSource('streets', {
+			"type": "geojson",
+			"data": "streetCond.json",
+			"generateId": true
+	});
+			//	});
+					// //add and style the layer of data
+	 map.addLayer({
+		 	"id":"2015",
+			"type":"line",
+			"source":"streets",
+		 	"layout": {
+		 		"line-join": "round",
+				"line-cap": "round",
+				"visibility":"visible"
+		 	},
+				// style the lines by data conditions
+		 	"paint": {
+		 		"line-color": [
+		 			"interpolate",
+					["linear"],
+		 			["get","PCI_2015"],
+					40,
+		 			"red",
+		 			70,
+		 			"yellow",
+		 			100,
+		 			"green"
+		 		],
+	 		"line-width": 0.9,
+			"line-opacity":.8
+					 	}
+				 });
+
+	map.addLayer({
+		"id":"2015a",
+		"type":"line",
+		"source":"streets",
+		"layout": {
+			"line-join": "round",
+			"line-cap": "round",
+			"visibility":"visible"
+		},
+			// style the lines by data conditions
+		"paint": {
+			"line-color": [
+				"interpolate",
+				["linear"],
+				["get","PCI_2015"],
+				40,
+				"red",
+				70,
+				"yellow",
+				100,
+				"green"
+			],
+		"line-width": 5,
+		"line-opacity":0
+		}
+	});
+
+	map.on("click","2015a", function(e){
+			new mapboxgl.Popup()
+			.setLngLat(e.lngLat)
+			.setHTML("<b>Observed 2015 street condition: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 street condition: " +e.features[0].properties.PCI_19)
+			.addTo(map);
+			});
+
+	map.on('mouseenter', '2015a', function () {
+		map.getCanvas().style.cursor = 'hand';
+});
+
+// Change it back to a pointer when it leaves.
+	map.on('mouseleave', '2015a', function () {
+		map.getCanvas().style.cursor = 'pointer';
+});
+map.addControl(new mapboxgl.NavigationControl());
+});
+mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; //'yourAccessTokenHere';
+</Script>
+<div class = "wrapper2">
+	<div id="cluster"></div>
+</div>
+
+<script>
+
+var map2 = new mapboxgl.Map({
+ container:'cluster', // HTML container id
+ style: 'mapbox://styles/mapbox/streets-v11',  // style URL
+ center:[-122.4733, 47.255], // starting position as [lng, lat]
+ zoom: 10
+ // starting zoom
+});
+map2.on("load",function(){
+
+map2.addSource("FireTable",{
+		"type":"geojson",
+		"data":"FireTable_ShaperCon.json",
+		"cluster":true,
+		"clusterMaxZoom":14,
+		"clusterRadius":30
+
+});
+
+map2.addLayer({
+		"id": "clusters",
+		"type": "circle",
+		"source": "FireTable",
+		"filter":["has","point_count"],
+		"paint":{
+					"circle-color":[
+						"step",
+						["get","point_count"],
+						'#51bbd6',
+						25,
+						'#f1f075',
+						75,
+						'#f28cb1',
+						150,
+						"purple"
+					],
+					"circle-radius":[
+						"step",
+						["get","point_count"],
+						20,
+						40,
+						30,
+						80,
+						40,
+						120,
+						50
+					],
+					"circle-opacity":0.8
+		}
+});
+
+
+map2.addLayer({
+		"id":"cluster-count",
+		"type":"symbol",
+		"source":"FireTable",
+		"filter":["has","point_count"],
+		"layout":{
+					"text-field":"{point_count_abbreviated}",
+					"text-font":["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+					"text-size":12
+			}
+});
+map2.addLayer({
+		"id":"unclustered-point",
+		"type":"circle",
+		"source":"FireTable",
+		"filter":["!",["has","point_count"]],
+		"paint": {
+					"circle-color":"#ffc11f",
+					"circle-radius":4,
+					"circle-blur": 0.8,
+					"circle-opacity":0.8
+			},
+	});
+});
+
+map.on("click","clusters",function(e){
+			var features = map.queryRenderedFeatures(e.point,
+				{
+					layers:["clusters"]
+
+			});
+			var clusterId= features[0].properties.cluster_id;
+			map.getSource("FireTable").getClusterExpansionZoom(
+				clusterId,
+				function(err, zoom){
+					if (err)return;
+
+					map.easeTo({
+						"center":
+							features[0].geometry.coordinates,
+							"zoom":"zoom"
+					});
+				}
+			);
+	});
+
+
+
+
+
+			// A selector or reference to HTML element
+			//var container = '#map';
+
+
+
+		</script>
+	</body>
+</html>
