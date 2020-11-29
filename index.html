@@ -191,11 +191,7 @@ map.addControl(new mapboxgl.NavigationControl());
 });
 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; //'yourAccessTokenHere';
 </Script>
-<section>
-<div class = "wrapper2">
-	<div id="cluster"></div>
-</div>
-</section>
+
 
 <script>
 
@@ -204,7 +200,7 @@ var map2 = new mapboxgl.Map({
  container:'cluster', // HTML container id
  style: 'mapbox://styles/mapbox/streets-v11',  // style URL
  center:[-122.4733, 47.255], // starting position as [lng, lat]
- zoom: 10
+ zoom: 11
  // starting zoom
 });
 map2.on("load",function(){
@@ -219,6 +215,7 @@ map2.addSource("FireTable",{
 });
 
 map2.addLayer({
+	// set number of points for a cluster
 		"id": "clusters",
 		"type": "circle",
 		"source": "FireTable",
@@ -227,26 +224,30 @@ map2.addLayer({
 					"circle-color":[
 						"step",
 						["get","point_count"],
-						'#51bbd6',
-						25,
-						'#f1f075',
-						75,
-						'#f28cb1',
-						150,
-						"purple"
+						'#fe7f2d',
+						20,
+						'#fcca46',
+						60,
+						'#941b0c',
+						120,
+						"#233d4d"
 					],
+					// set radius based on number in cluster
 					"circle-radius":[
 						"step",
 						["get","point_count"],
+						25,
 						20,
-						40,
-						30,
-						80,
-						40,
-						120,
-						50
+						45,
+						60,
+
+
+						80
+
 					],
-					"circle-opacity":0.8
+					"circle-opacity":0.8,
+					"circle-stroke-color":"black",
+					"circle-stroke-width":0.5
 		}
 });
 
