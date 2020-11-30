@@ -6,49 +6,59 @@
 <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 
-
-
 	</head>
 	<body>
 
 		<style>
 		body {
-			max-width: 80%;
-			margin:auto;
+			font-family: "helvetica",sans-serif;
+
 		}
 		.wrapper {
-			position:absolute;
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+			padding-left: 20px;
+			padding-right: 20px;
 
 		}
 		.wrapper2 {
 			position:absolute;
 		}
-		.title{
+		h1 {
 			font-size: 30px;
 			font-weight: bold;
-			position:relative;
+			text-align: center;
+			padding-top: 16px;
 		}
 		#textbox {
 			position:relative;
 			z-index: 1;
 			left:10px;
-			bottom:0;
-			top:300px;
-			width:230px;
-			height: 200px;
-			background-color: #4a5175;
-			opacity:0.75;
-			font-size: 8;
-			line-height:1.5;
+			bottom:0px;
+			top:375px;
+			width:200px;
+			height:150px;
+			background-color: #473739;
+			opacity: 0.8;
 		}
-		p {
-
-			font-family: "helvetica",sans-serif;
+		h3{
+			color:white;
+			font-size: 10;
+			font-weight: bolder;
 			text-align: center;
-			color: white;
-			margin-top: 15px;
-
+			padding-top: 10px;
+			margin-top:12px;
+			margin-bottom: 0px;
 		}
+		h4 {
+			color: white;
+			text-align:center;
+			margin-top: 0px;
+			margin-bottom:12px;
+			line-height: 1.5;
+		}
+
 		.green {
 			color:green;
 			font-weight: bolder;
@@ -63,44 +73,41 @@
 		}
 		#map {
 			height: 80vh;
-			width:70vw;
-			margin-bottom:30px;
+			width:100%;
+			margin:10px 10px 10px 10px;
+			/* left:35px; */
+			/* margin-bottom:30px; */
 		}
-		#cluster {
-			position:relative;
-
+		#map2 {
 			height: 80vh;
-			width: 70vw;
-			margin-top: 30px;
+			width: 100%;
+			margin: 10px 10px 10px 10px;
+
 		}
-		</style>
 
+</style>
 
-<!-- style the container for the map -->
-<!-- create div for the map here -->
+<!-- create wrapper to hold elements of the map layout together -->
 
 <div class= "wrapper">
 		<h1>Street Conditions in Tacoma</h1>
-
 		<div id="map">
-			<div id="textbox">
-				<p>Street surfaces were evaluated in 2015 to rate their quality and modeled to predict future quality.<br><span class="red">Red</span>= Poor (0-40)<br><span class ="yellow">Yellow</span>= Moderate (40-70)<br><span class= "green">Green</span> = Good (70-100)
+			<div id="textbox"><h3>Street Condition Ratings</h3><br>
+				<h4><span class="red">Red</span> = Poor (0-40)<br>
+					<span class = "yellow">Yellow</span> = Moderate (40-70)<br>
+					<span class = "green">Green</span> = Good (70-100)</h4>
 				</div>
+			</div>
 		</div>
-
-<div id = "cluster">
-<h1>Fires in Tacoma from 2015-2020</h1>
-</div>
-</div>
-</div>
 
 
 
 <script>
-			//Mapbox access token here
-			 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; 'yourAccessTokenHere';
+			// Mapbox access token here
+			 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw';
 
-// <!-- JS code for the map goes here -->
+ 		 // JS code for the map goes here
+
 			var map = new mapboxgl.Map({
 			container: "map",
 			style: "mapbox://styles/h-warren/ckhp5h0030eql19piink2ez7q",
@@ -144,7 +151,7 @@ map.on('load', function(){
 			"line-opacity":.8
 					 	}
 				 });
-
+// set layer with thicker lines that can be clicked for popup
 	map.addLayer({
 		"id":"2015a",
 		"type":"line",
@@ -180,24 +187,32 @@ map.on('load', function(){
 			});
 
 	map.on('mouseenter', '2015a', function () {
-		map.getCanvas().style.cursor = 'hand';
+		map.getCanvas().style.cursor = 'pointer';
 });
 
-// Change it back to a pointer when it leaves.
+ // Change it back to a pointer when it leaves.
 	map.on('mouseleave', '2015a', function () {
 		map.getCanvas().style.cursor = 'pointer';
 });
 map.addControl(new mapboxgl.NavigationControl());
 });
-mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw'; //'yourAccessTokenHere';
-</Script>
+</script>
+
+
+
+<div class= "wrapper">
+	<h1>Hot Spots in Tacoma 2015-2020</h1>
+	<div id= "map2">
+	</div>
+</div>
 
 
 <script>
 
+	 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw';
 
 var map2 = new mapboxgl.Map({
- container:'cluster', // HTML container id
+ container:"map2", // HTML container id
  style: 'mapbox://styles/mapbox/streets-v11',  // style URL
  center:[-122.4733, 47.255], // starting position as [lng, lat]
  zoom: 11
@@ -221,6 +236,7 @@ map2.addLayer({
 		"source": "FireTable",
 		"filter":["has","point_count"],
 		"paint":{
+			// colors for circle-clusters at different sizes
 					"circle-color":[
 						"step",
 						["get","point_count"],
@@ -240,10 +256,7 @@ map2.addLayer({
 						20,
 						45,
 						60,
-
-
-						80
-
+						120,
 					],
 					"circle-opacity":0.8,
 					"circle-stroke-color":"black",
@@ -259,7 +272,7 @@ map2.addLayer({
 		"filter":["has","point_count"],
 		"layout":{
 					"text-field":"{point_count_abbreviated}",
-					"text-font":["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+					"text-font":["Arial Unicode MS Bold"],
 					"text-size":12
 			}
 });
@@ -298,16 +311,9 @@ map.on("click","clusters",function(e){
 			);
 	});
 
-
-
-
-
-			// A selector or reference to HTML element
-			//var container = '#map';
-
-
-
 		</script>
+
+
 
 	</body>
 </html>
