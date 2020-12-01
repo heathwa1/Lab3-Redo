@@ -147,55 +147,97 @@ map.on('load', function(){
 		 			100,
 		 			"green"
 		 		],
-	 		"line-width": 0.9,
-			"line-opacity":.8
-					 	}
-				 });
-// set layer with thicker lines that can be clicked for popup
-	map.addLayer({
-		"id":"2015a",
-		"type":"line",
-		"source":"streets",
-		"layout": {
-			"line-join": "round",
-			"line-cap": "round",
-			"visibility":"visible"
-		},
-			// style the lines by data conditions
-		"paint": {
-			"line-color": [
-				"interpolate",
-				["linear"],
-				["get","PCI_2015"],
-				40,
-				"red",
-				70,
-				"yellow",
-				100,
-				"green"
-			],
-		"line-width": 5,
-		"line-opacity":0
+	 		"line-width": 2,
+			"line-opacity":[
+				'case',
+				['boolean',[ 'feature-state','hover'],
+					false],
+					1,
+					0.5
+
+			]
 		}
 	});
+// set layer with thicker lines that can be clicked for popup
+	// map.addLayer({
+	// 	"id":"2015a",
+	// 	"type":"line",
+	// 	"source":"streets",
+	// 	"layout": {
+	// 		"line-join": "round",
+	// 		"line-cap": "round",
+	// 		"visibility":"visible"
+	// 	},
+	// 		// style the lines by data conditions
+	// 	"paint": {
+	// 		"line-color": [
+	// 			"interpolate",
+	// 			["linear"],
+	// 			["get","PCI_2015"],
+	// 			40,
+	// 			"red",
+	// 			70,
+	// 			"yellow",
+	// 			100,
+	// 			"green"
+	// 		],
+	// 	"line-width": 5,
+	// 	"line-opacity":[
+	// 		'case',
+	// 		['boolean',[ 'feature-state','hover'],
+	// 			false],
+	// 			1
+	//
+	// 	]
 
-	map.on("click","2015a", function(e){
+	// 	}
+	// });
+	var hoveredStateId= null;
+map.on('mousemove', '2015', function(e){
+	if (e.features.length > 0){
+		if (hoveredStateId){
+			map.setFeatureState(
+				{ source:'streets', id: hoveredStateId},
+					{hover:false}
+			);
+		}
+		hoveredStateId = e.features[0].id;
+		map.setFeatureState(
+			{source: 'streets', id:hoveredStateId},
+				{ hover:true }
+		);
+	}
+});
+map.on('mouseleave', '2015', function(){
+	if (hoveredStateId){
+		map.setFeatureState(
+			{source: 'streets', id: hoveredStateId},
+				{hover: false}
+		);
+	}
+hoveredStateId = null;
+});
+	});
+
+
+	map.on("click","2015", function(e){
 			new mapboxgl.Popup()
 			.setLngLat(e.lngLat)
-			.setHTML("<b>Observed 2015 street condition: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 street condition: " +e.features[0].properties.PCI_19)
+			.setHTML("<b>Observed 2015 street condition: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 street condition: " +e.features[0].properties.STR_COMPL)
 			.addTo(map);
 			});
 
 	map.on('mouseenter', '2015a', function () {
 		map.getCanvas().style.cursor = 'pointer';
-});
+// });
 
  // Change it back to a pointer when it leaves.
 	map.on('mouseleave', '2015a', function () {
-		map.getCanvas().style.cursor = 'pointer';
+		map.getCanvas().style.cursor = '';
+});
 });
 map.addControl(new mapboxgl.NavigationControl());
-});
+
 </script>
 
 
@@ -290,19 +332,19 @@ map2.addLayer({
 	});
 });
 
-map.on("click","clusters",function(e){
+map2.on("click","clusters",function(e){
 			var features = map.queryRenderedFeatures(e.point,
 				{
 					layers:["clusters"]
 
 			});
 			var clusterId= features[0].properties.cluster_id;
-			map.getSource("FireTable").getClusterExpansionZoom(
+			map2.getSource("FireTable").getClusterExpansionZoom(
 				clusterId,
 				function(err, zoom){
 					if (err)return;
 
-					map.easeTo({
+					map2.easeTo({
 						"center":
 							features[0].geometry.coordinates,
 							"zoom":"zoom"
