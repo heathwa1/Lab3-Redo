@@ -74,7 +74,7 @@
 		#map {
 			height: 80vh;
 			width:100%;
-			margin:10px 10px 10px 10px;
+			/* margin:10px 10px 10px 10px; */
 			/* left:35px; */
 			/* margin-bottom:30px; */
 		}
@@ -84,6 +84,7 @@
 			margin: 10px 10px 10px 10px;
 
 		}
+
 
 </style>
 
@@ -99,7 +100,7 @@
 				</div>
 			</div>
 		</div>
-
+<div id ="info"></div>
 
 
 <script>
@@ -120,8 +121,10 @@ map.on('load', function(){
 // add geojson source for data on the map
 	map.addSource('streets', {
 			"type": "geojson",
-			"data": "streetCond.json",
+			"data": "tacStreets_proj.json",
+			// needed for feature state
 			"generateId": true
+
 	});
 
 		// //add and style the layer of data
@@ -147,13 +150,13 @@ map.on('load', function(){
 		 			100,
 		 			"green"
 		 		],
-	 		"line-width": 2,
+	 		"line-width": 3,
 			"line-opacity":[
 				'case',
 				['boolean',[ 'feature-state','hover'],
 					false],
 					1,
-					0.5
+					0.4
 
 			]
 		}
@@ -217,27 +220,26 @@ map.on('mouseleave', '2015', function(){
 	}
 hoveredStateId = null;
 });
-	});
 
 
 	map.on("click","2015", function(e){
 			new mapboxgl.Popup()
 			.setLngLat(e.lngLat)
-			.setHTML("<b>Observed 2015 street condition: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 street condition: " +e.features[0].properties.STR_COMPL)
+			.setHTML("<b>Observed 2015 Rating: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 Rating:<br> " +e.features[0].properties.PCI_19)
 			.addTo(map);
 			});
 
-	map.on('mouseenter', '2015a', function () {
+	map.on('mouseenter', '2015', function () {
 		map.getCanvas().style.cursor = 'pointer';
 // });
 
  // Change it back to a pointer when it leaves.
-	map.on('mouseleave', '2015a', function () {
+	map.on('mouseleave', 'streets', function () {
 		map.getCanvas().style.cursor = '';
 });
 });
-map.addControl(new mapboxgl.NavigationControl());
-
+// map.addControl(new mapboxgl.NavigationControl());
+});
 </script>
 
 
@@ -266,8 +268,9 @@ map2.addSource("FireTable",{
 		"type":"geojson",
 		"data":"FireTable_ShaperCon.json",
 		"cluster":true,
-		"clusterMaxZoom":14,
-		"clusterRadius":30
+		"clusterMaxZoom":13,
+		"clusterRadius":30,
+		"generateId":true
 
 });
 
@@ -300,7 +303,7 @@ map2.addLayer({
 						60,
 						120,
 					],
-					"circle-opacity":0.8,
+					"circle-opacity":0.85,
 					"circle-stroke-color":"black",
 					"circle-stroke-width":0.5
 		}
@@ -315,43 +318,68 @@ map2.addLayer({
 		"layout":{
 					"text-field":"{point_count_abbreviated}",
 					"text-font":["Arial Unicode MS Bold"],
-					"text-size":12
+					"text-size":10
 			}
 });
+map2.loadImage(
+'image.png',
+function (error, image) {
+if (error) throw error;
+map2.addImage('flame', image);
+
 map2.addLayer({
 		"id":"unclustered-point",
-		"type":"circle",
+		"type":"symbol",
 		"source":"FireTable",
 		"filter":["!",["has","point_count"]],
-		"paint": {
-					"circle-color":"#ffc11f",
-					"circle-radius":4,
-					"circle-blur": 0.8,
-					"circle-opacity":0.8
-			},
+		"layout":{
+			"icon-image":"flame",
+			"icon-size":0.03,
+			"icon-allow-overlap": true
+		},
+
 	});
 });
+});
 
-map2.on("click","clusters",function(e){
-			var features = map.queryRenderedFeatures(e.point,
-				{
-					layers:["clusters"]
-
-			});
-			var clusterId= features[0].properties.cluster_id;
-			map2.getSource("FireTable").getClusterExpansionZoom(
-				clusterId,
-				function(err, zoom){
-					if (err)return;
-
-					map2.easeTo({
-						"center":
-							features[0].geometry.coordinates,
-							"zoom":"zoom"
+// map2.on("click","map2",function(e){
+// 			var features = map2.queryRenderedFeatures(e.point,
+// 				{
+// 					layers:["FireTable"]
+//
+// 			});
+			// var clusterId= e.features[0].properties.clusterId;
+			// map2.getSource("FireTable").getClusterExpansionZoom(
+			// 	clusterId,
+			// 	function(err, zoom){
+			// 		if (err)return;
+			//
+			// 		map2.easeTo({
+			// 			"center":
+			// 				e.features[0].geometry.coordinates,
+			// 				"zoom":"zoom"
+			// 		});
+			// 	}
+			// );
+				// });
+			map2.on("click","unclustered-point", function(e){
+				var coordinates = e.features[0].geometry.coordinates.slice();
+					new mapboxgl.Popup()
+					.setLngLat(coordinates)
+					.setHTML("<b>Year: " +e.features[0].properties.IncidentYear+"<br>Type of fire:<br> " +e.features[0].properties.FireType)
+					.addTo(map);
 					});
-				}
-			);
-	});
+
+			map2.on('mouseenter', 'unclustered-point', function () {
+				map2.getCanvas().style.cursor = 'pointer';
+		// });
+
+		 // Change it back to a pointer when it leaves.
+			map2.on('mouseleave', 'FireTable', function () {
+				map2.getCanvas().style.cursor = '';
+		});
+		});
+
 
 		</script>
 
