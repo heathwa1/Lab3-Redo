@@ -1,89 +1,87 @@
 <!DOCTYPE html>
 <html>
-	<head>
+  <head>
 		<!-- insert Mapbox GL library links here -->
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 
-	</head>
-	<body>
+</head>
+  <body>
 
-		<style>
-		body {
-			font-family: "helvetica",sans-serif;
+	<style>
+	body {
+		font-family: "helvetica",sans-serif;
 
-		}
-		.wrapper {
-			max-width: 900px;
-			margin-left: auto;
-			margin-right: auto;
-			padding-left: 20px;
-			padding-right: 20px;
+	}
+		
+	.wrapper {
+		max-width: 900px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 20px;
+		padding-right: 20px;
 
-		}
-		.wrapper2 {
-			position:absolute;
-		}
-		h1 {
-			font-size: 30px;
-			font-weight: bold;
-			text-align: center;
-			padding-top: 16px;
-		}
-		#textbox {
-			position:relative;
-			z-index: 1;
-			left:10px;
-			bottom:0px;
-			top:375px;
-			width:200px;
-			height:150px;
-			background-color: #473739;
-			opacity: 0.8;
-		}
-		h3{
-			color:white;
-			font-size: 10;
-			font-weight: bolder;
-			text-align: center;
-			padding-top: 10px;
-			margin-top:12px;
-			margin-bottom: 0px;
-		}
-		h4 {
-			color: white;
-			text-align:center;
-			margin-top: 0px;
-			margin-bottom:12px;
-			line-height: 1.5;
-		}
+	}
+	
+	h1 {
+		font-size: 30px;
+		font-weight: bold;
+		text-align: center;
+		padding-top: 16px;
+	}
+	#textbox {
+		position:relative;
+		z-index: 1;
+		left:10px;
+		bottom:0px;
+		top:375px;
+		width:200px;
+		height:150px;
+		background-color: #473739;
+		opacity: 0.8;
+	}
+	h3 {
+		color:white;
+		font-size: 10;
+		font-weight: bolder;
+		text-align: center;
+		padding-top: 10px;
+		margin-top:12px;
+		margin-bottom: 0px;
+	}
+	h4 {
+		color: white;
+		text-align:center;
+		margin-top: 0px;
+		margin-bottom:12px;
+		line-height: 1.5;
+	}
 
-		.green {
-			color:green;
-			font-weight: bolder;
-		}
-		.yellow {
-			color:yellow;
-			font-weight: bolder;
-		}
-		.red {
-			color:red;
-			font-weight: bolder;
-		}
-		#map {
-			height: 80vh;
-			width:100%;
-			/* margin:10px 10px 10px 10px; */
-			/* left:35px; */
-			/* margin-bottom:30px; */
-		}
-		#map2 {
-			height: 80vh;
-			width: 100%;
-			margin: 10px 10px 10px 10px;
-
-		}
+	.green {
+		color:green;
+		font-weight: bolder;
+	}
+	.yellow {
+		color:yellow;
+		font-weight: bolder;
+	}
+	.red {
+		color:red;
+		font-weight: bolder;
+	}
+	#map {
+		height: 80vh;
+		width:100%;
+		/* margin:10px 10px 10px 10px; */
+		/* left:35px; */
+		/* margin-bottom:30px; */
+	}
+	#map2 {
+		height: 80vh;
+		width: 100%;
+		margin: 10px 10px 10px 10px;
+	}
 
 
 </style>
@@ -104,52 +102,53 @@
 
 
 <script>
-			// Mapbox access token here
-			 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw';
+// Mapbox access token here
+ mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw';
 
- 		 // JS code for the map goes here
+ // JS code for the map goes here
 
-			var map = new mapboxgl.Map({
-			container: "map",
-			style: "mapbox://styles/h-warren/ckhp5h0030eql19piink2ez7q",
-			center: [ -122.4559,47.2344],
-			zoom: 12
-		});
+	var map = new mapboxgl.Map({
+	container: "map",
+	style: "mapbox://styles/h-warren/ckhp5h0030eql19piink2ez7q",
+	center: [ -122.4559,47.2344],
+	zoom: 12
+	});
 
 
 map.on('load', function(){
+
 // add geojson source for data on the map
 	map.addSource('streets', {
-			"type": "geojson",
-			"data": "tacStreets_proj.json",
-			// needed for feature state
-			"generateId": true
+		"type": "geojson",
+		"data": "tacStreets_proj.json",
+		// needed for feature state
+		"generateId": true
 
 	});
 
-		// //add and style the layer of data
+	 //add and style the layer of data
 	 map.addLayer({
-		 	"id":"2015",
-			"type":"line",
-			"source":"streets",
-		 	"layout": {
-		 		"line-join": "round",
-				"line-cap": "round",
-				"visibility":"visible"
-		 	},
-				// style the lines by data conditions
-		 	"paint": {
-		 		"line-color": [
-		 			"interpolate",
-					["linear"],
-		 			["get","PCI_2015"],
-					40,
-		 			"red",
-		 			70,
-		 			"yellow",
-		 			100,
-		 			"green"
-		 		],
+		"id":"2015",
+		"type":"line",
+		"source":"streets",
+		"layout": {
+			"line-join": "round",
+			"line-cap": "round",
+			"visibility":"visible"
+		},
+			// style the lines by data conditions
+		"paint": {
+			"line-color": [
+				"interpolate",
+				["linear"],
+				["get","PCI_2015"],
+				40,
+				"red",
+				70,
+				"yellow",
+				100,
+				"green"
+			],
 	 		"line-width": 3,
 			"line-opacity":[
 				'case',
@@ -157,10 +156,10 @@ map.on('load', function(){
 					false],
 					1,
 					0.4
-
 			]
 		}
 	});
+	
 // set layer with thicker lines that can be clicked for popup
 	// map.addLayer({
 	// 	"id":"2015a",
@@ -222,23 +221,23 @@ hoveredStateId = null;
 });
 
 
-	map.on("click","2015", function(e){
-			new mapboxgl.Popup()
-			.setLngLat(e.lngLat)
-			.setHTML("<b>Observed 2015 Rating: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 Rating:<br> " +e.features[0].properties.PCI_19)
-			.addTo(map);
-			});
+map.on("click","2015", function(e){
+		new mapboxgl.Popup()
+		.setLngLat(e.lngLat)
+		.setHTML("<b>Observed 2015 Rating: " + e.features[0].properties.PCI_2015+"<br>Predicted 2019 Rating:<br> " +e.features[0].properties.PCI_19)
+		.addTo(map);
+		});
 
-	map.on('mouseenter', '2015', function () {
-		map.getCanvas().style.cursor = 'pointer';
+map.on('mouseenter', '2015', function () {
+	map.getCanvas().style.cursor = 'pointer';
 // });
 
  // Change it back to a pointer when it leaves.
-	map.on('mouseleave', 'streets', function () {
-		map.getCanvas().style.cursor = '';
+map.on('mouseleave', 'streets', function () {
+	map.getCanvas().style.cursor = '';
 });
 });
-// map.addControl(new mapboxgl.NavigationControl());
+ map.addControl(new mapboxgl.NavigationControl());
 });
 </script>
 
@@ -255,13 +254,13 @@ hoveredStateId = null;
 
 	 mapboxgl.accessToken = 'pk.eyJ1IjoiaC13YXJyZW4iLCJhIjoiY2tnemJmaG54MDQzNjJ3cnN2Mmg1MmF2cyJ9.AMeyJ2g8BQiBQ2ZyH9OyJw';
 
-var map2 = new mapboxgl.Map({
- container:"map2", // HTML container id
- style: 'mapbox://styles/mapbox/streets-v11',  // style URL
- center:[-122.4733, 47.255], // starting position as [lng, lat]
- zoom: 11
- // starting zoom
-});
+	var map2 = new mapboxgl.Map({
+	 container:"map2", // HTML container id
+	 style: 'mapbox://styles/mapbox/streets-v11',  // style URL
+	 center:[-122.4733, 47.255], // starting position as [lng, lat]
+	 zoom: 11
+	 // starting zoom
+	});
 map2.on("load",function(){
 
 map2.addSource("FireTable",{
@@ -316,18 +315,18 @@ map2.addLayer({
 		"source":"FireTable",
 		"filter":["has","point_count"],
 		"layout":{
-					"text-field":"{point_count_abbreviated}",
-					"text-font":["Arial Unicode MS Bold"],
-					"text-size":10
+			"text-field":"{point_count_abbreviated}",
+			"text-font":["Arial Unicode MS Bold"],
+			"text-size":10
 			}
 });
 map2.loadImage(
-'image.png',
-function (error, image) {
-if (error) throw error;
-map2.addImage('flame', image);
+	'image.png',
+	function (error, image) {
+	if (error) throw error;
+	map2.addImage('flame', image);
 
-map2.addLayer({
+	map2.addLayer({
 		"id":"unclustered-point",
 		"type":"symbol",
 		"source":"FireTable",
@@ -341,7 +340,7 @@ map2.addLayer({
 	});
 });
 });
-
+// 	causes error in map when active.clusters work without this
 // map2.on("click","map2",function(e){
 // 			var features = map2.queryRenderedFeatures(e.point,
 // 				{
@@ -362,28 +361,28 @@ map2.addLayer({
 			// 	}
 			// );
 				// });
-			map2.on("click","unclustered-point", function(e){
-				var coordinates = e.features[0].geometry.coordinates.slice();
-					new mapboxgl.Popup()
-					.setLngLat(coordinates)
-					.setHTML("<b>Year: " +e.features[0].properties.IncidentYear+"<br>Type of fire:<br> " +e.features[0].properties.FireType)
-					.addTo(map);
-					});
-
-			map2.on('mouseenter', 'unclustered-point', function () {
-				map2.getCanvas().style.cursor = 'pointer';
-		// });
-
-		 // Change it back to a pointer when it leaves.
-			map2.on('mouseleave', 'FireTable', function () {
-				map2.getCanvas().style.cursor = '';
-		});
+	
+// 	map not reacting to this function. The data/point_count not allowing for popup
+map2.on("click","unclustered-point", function(e){
+	var coordinates = e.features[0].geometry.coordinates.slice();
+		new mapboxgl.Popup()
+		.setLngLat(coordinates)
+		.setHTML("<b>Year: " +e.features[0].properties.IncidentYear+"<br>Type of fire:<br> " +e.features[0].properties.FireType)
+		.addTo(map);
 		});
 
+map2.on('mouseenter', 'unclustered-point', function () {
+	map2.getCanvas().style.cursor = 'pointer';
+		
 
-		</script>
+ // Change it back to a pointer when it leaves.
+map2.on('mouseleave', 'FireTable', function () {
+	map2.getCanvas().style.cursor = '';
+});
+});
 
 
+</script>
 
-	</body>
+  </body>
 </html>
