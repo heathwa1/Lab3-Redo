@@ -288,7 +288,7 @@ map2.addLayer({
 						'#fe7f2d',
 						20,
 						'#fcca46',
-						60,
+						75,
 						'#941b0c',
 						120,
 						"#233d4d"
@@ -297,13 +297,15 @@ map2.addLayer({
 					"circle-radius":[
 						"step",
 						["get","point_count"],
-						25,
 						20,
-						45,
-						60,
+						20,
+						30,
+						75,
+						50,
 						120,
+						55
 					],
-					"circle-opacity":0.85,
+					"circle-opacity":1,
 					"circle-stroke-color":"black",
 					"circle-stroke-width":0.5
 		}
@@ -318,7 +320,20 @@ map2.addLayer({
 		"layout":{
 					"text-field":"{point_count_abbreviated}",
 					"text-font":["Arial Unicode MS Bold"],
+					"text-allow-overlap":false,
 					"text-size":10
+			},
+			"paint":{
+				"text-color":[
+					"step",
+					["get","point_count"],
+					"#ab481a",
+					20,
+					"#ab481a",
+					60,
+					"#dea30d"
+				]
+
 			}
 });
 map2.loadImage(
@@ -334,9 +349,12 @@ map2.addLayer({
 		"filter":["!",["has","point_count"]],
 		"layout":{
 			"icon-image":"flame",
-			"icon-size":0.03,
-			"icon-allow-overlap": true
-		},
+			"icon-size":{
+				"stops":[[11,0],[12,0.03],[13,0.04]]
+			},
+			"icon-allow-overlap": false
+		}
+
 
 	});
 });
@@ -362,20 +380,20 @@ map2.addLayer({
 			// 	}
 			// );
 				// });
-			map2.on("click","unclustered-point", function(e){
-				var coordinates = e.features[0].geometry.coordinates.slice();
+			map2.on("click","point", function(e){
+
 					new mapboxgl.Popup()
-					.setLngLat(coordinates)
+					.setLngLat(e.lngLat)
 					.setHTML("<b>Year: " +e.features[0].properties.IncidentYear+"<br>Type of fire:<br> " +e.features[0].properties.FireType)
 					.addTo(map);
 					});
 
-			map2.on('mouseenter', 'unclustered-point', function () {
+			map2.on('mouseenter', "unclustered-point", function () {
 				map2.getCanvas().style.cursor = 'pointer';
 		// });
 
 		 // Change it back to a pointer when it leaves.
-			map2.on('mouseleave', 'FireTable', function () {
+			map2.on('mouseleave', "FireTable", function () {
 				map2.getCanvas().style.cursor = '';
 		});
 		});
