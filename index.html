@@ -196,7 +196,7 @@ map.on('load', function(){
 	// 	}
 	// });
 	var hoveredStateId= null;
-map.on('mousemove', '2015', function(e){
+map.on('mouseover', '2015', function(e){
 	if (e.features.length > 0){
 		if (hoveredStateId){
 			map.setFeatureState(
@@ -380,9 +380,10 @@ map2.addLayer({
 			// 	}
 			// );
 				// });
-			map2.on("click","point", function(e){
+			map2.on("click","image", function(e){
 
-					new mapboxgl.Popup()
+
+				var popup = new mapboxgl.Popup()
 					.setLngLat(e.lngLat)
 					.setHTML("<b>Year: " +e.features[0].properties.IncidentYear+"<br>Type of fire:<br> " +e.features[0].properties.FireType)
 					.addTo(map);
